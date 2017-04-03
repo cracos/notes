@@ -20,16 +20,27 @@ Monit can be started up with a command that then keeps it running in the backgro
 ```vim
 $ monit
 ```
+![monit start](monitImages/monitStart.png)
+
 if you get "error connecting to the monit daemon" you should check next thing:
 * Make sure that you set ``startup=1`` in ``/etc/default/monit``
-Typing monit status displays monit’s details:  
+
+![monit](monitImages/monitsetSU1.png)
+
+Typing monit status displays monit’s details: 
+
+![monit](monitImages/monitDetails.png)
+
 ### Configuring Monit
 In fact the configuration files are created to be very easily readable and making them easier for users to understand. It is designed to monitor the running services in every 2 minutes and keeps the logs in “__/var/log/monit__“.
+
 ### Web Service
 __Monit__ has it’s web interface that runs on __port 2812__ using web server. To enable web interface you need to make changes in monit configuration file. The main configuration file of monit located at ``/etc/monit/monitrc`` file for (Ubuntu/Debian/Linux Mint). Open this file using your choice of editor.
 ```vim
 $ sudo nano /etc/monit/monitrc
 ```
+![monit](monitImages/monitConfigFile.png)
+
 Next, uncomment the following section and add the IP address or domain name of your server, allow anyone to connect and change monit user and password or you can use default ones.
 ```bash
 set httpd port 2812 and
@@ -37,6 +48,8 @@ use address localhost  # only accept connection from localhost
 allow localhost        # allow localhost to connect to the server and
 allow admin:monit      # require user 'admin' with password 'monit'
 ```
+![monit](monitImages/monitPort2812.png)
+
 Once you’ve configured it, you need to start the monit service or reload the new configuration settings.
 ```vim
 $ sudo /etc/init.d/monit start
@@ -46,6 +59,9 @@ or
 $ sudo monit reload
 ```
 Now, you will able to access the monit web interface by navigating to the __“http://localhost:2812”__ or __“http://example.com:2812“__. Then enter user name as “__admin__” and password as “__monit__“. You should get screen similar to below.  
+
+![monit](monitImages/monitWebService.png)
+
 ### Adding Monitoring Services
 Once monit web interface correctly setup, start adding the programs that you want to monitor into the __/etc/monit/monitrc__ file for (Ubuntu/Debian/Linux Mint) at the bottom.
 
@@ -105,3 +121,71 @@ You can verify that monit service is started by checking log file.
 ```vim
 $ sudo tail -f /var/log/monit.log
 ```
+
+![monit](monitImages/monitLog.png)
+
+and you can see in the web service
+
+![monit](monitImages/monitWebService2.png)
+
+### command-line options
+
+The following options are recognized by monit. However, it is recommended that you set options (when applicable) directly in the monitrc control file.
+
+General Options and Arguments
+
+__-c__ --> file Use this control file
+
+__-d__ --> n Run as a daemon once per n seconds
+
+__-g__ --> Set group name for start, stop, restart, monitor and unmonitor.
+
+__-l__ --> logfile Print log information to this file
+
+__-p__ --> pidfile Use this lock file in daemon mode
+
+__-s__ --> statefile Write state information to this file
+
+__-I__ --> Do not run in background (needed for run from init)
+
+__-t__ --> Run syntax check for the control file
+
+__-v__ --> Verbose mode, work noisy (diagnostic output)
+
+__-H__ --> [filename] Print MD5 and SHA1 hashes of the file or of stdin if the filename is omitted; Monit will exit afterwards
+
+__-V__ --> Print version number and patch level
+
+__-h__ --> Print a help text
+
+In addition to the options above, Monit can be started with one of the following action arguments; Monit will then execute the action and exit without transforming itself to a daemon.
+
+__start all__ --> Start all services listed in the control file and enable monitoring for them. If the group option is set, only start and enable monitoring of services in the named group (no "all" verb is required in this case).
+
+__start name__ --> Start the named service and enable monitoring for it. The name is a service entry name from the monitrc file.
+
+__stop all__ --> Stop all services listed in the control file and disable their monitoring. If the group option is set, only stop and disable monitoring of the services in the named group (no "all" verb is required in this case).
+
+__stop name__ --> Stop the named service and disable its monitoring. The name is a service entry name from the monitrc file.
+
+__restart all__ --> Stop and start all services. If the group option is set, only restart the services in the named group (no "all" verb is required in this case).
+
+__restart name__ --> Restart the named service. The name is a service entry name from the monitrc file.
+
+__monitor all__ --> Enable monitoring of all services listed in the control file. If the group option is set, only start monitoring of services in the named group (no "all" verb is required in this case).
+
+__monitor name__ --> Enable monitoring of the named service. The name is a service entry name from the monitrc file. Monit will also enable monitoring of all services this service depends on.
+
+__unmonitor all__ --> Disable monitoring of all services listed in the control file. If the group option is set, only disable monitoring of services in the named group (no "all" verb is required in this case).
+
+__unmonitor name__ --> Disable monitoring of the named service. The name is a service entry name from the monitrc file. Monit will also disable monitoring of all services that depends on this service.
+
+__status__ --> Print full status information for each service.
+
+__summary__ --> Print short status information for each service.
+
+__reload__ --> Reinitialize a running Monit daemon, the daemon will reread its configuration, close and reopen log files.
+
+__quit__ --> Kill a Monit daemon process
+
+__validate__ --> Check all services listed in the control file. This action is also the default behavior when Monit runs in daemon mode.
